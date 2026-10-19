@@ -6,38 +6,69 @@
 </head>
 <body>
 
-  <h2>1단계: 크롬 보안 DNS 설정</h2>
-  <p>아래 예시 이미지처럼 <b>[보안 DNS 사용]</b> 스위치를 켜고 <b>Cloudflare(1.1.1.1)</b>를 선택해야 합니다.</p>
+  <h2>한컴타자 접속 오류 해결 안내</h2>
   
-  <!-- 같은 폴더의 capture.png 이미지를 불러옴 -->
-  <p><b>[참고 이미지]</b></p>
-  <img src="./capture.png" alt="보안 DNS 설정 예시" style="max-width:100%; height:auto; border:1px solid #ccc;">
+  <p>1. 먼저 아래 버튼을 눌러 주소를 복사한 뒤, 브라우저 맨 위 <b>주소창에 붙여넣고 엔터</b>를 쳐서 이동합니다.</p>
+  <input type="text" id="chromeUrl" value="chrome://settings/security" size="35" readonly>
+  <button onclick="copyText('chromeUrl')">크롬 설정 주소 복사</button>
 
-  <p>아래 버튼을 눌러 주소를 복사한 뒤 브라우저 <b>최상단 주소창에 붙여넣고 엔터</b>를 치세요.</p>
-  <input type="text" id="chromeUrl" value="chrome://settings/security" size="30" readonly>
-  <button onclick="copyText('chromeUrl')">크롬 주소 복사</button>
+  <p>2. 이동한 페이지에서 <b>여기에 들어가서 캡처된 이미지 처럼 이러이러하게 합니다.</b></p>
+  <p>(즉, <b>[보안 DNS 사용]</b> 스위치를 파란색으로 켜고 <b>Cloudflare(1.1.1.1)</b>를 고릅니다.)</p>
+  
+  <!-- 이미지 표시 영역 -->
+  <img src="./capture.png" alt="보안 DNS 설정 예시 이미지" style="max-width:100%; height:auto; border:1px solid #ccc; margin: 10px 0;">
 
-  <h2>2단계: 설정창이 잠겨서 안 눌릴 때 (PowerShell 명령어)</h2>
-  <p>설정 창이 회색 자물쇠로 막혀있다면 아래 버튼을 눌러 명령어를 복사하세요.</p>
-  <textarea id="psCommand" rows="2" cols="70" readonly onclick="this.select()">Remove-Item -Path "HKLM:\SOFTWARE\Policies\Google\Chrome", "HKCU:\SOFTWARE\Policies\Google\Chrome" -Recurse -ErrorAction SilentlyContinue; Stop-Process -Name chrome -Force -ErrorAction SilentlyContinue</textarea>
   <br><br>
-  <button onclick="copyText('psCommand')">PowerShell 명령어 복사</button>
+  <hr>
 
-  <h3>▶ 관리자 권한 PowerShell 실행법</h3>
-  <ol>
-    <li>윈도우 화면 왼쪽 아래 <b>시작 버튼을 마우스 오른쪽 클릭</b>합니다.</li>
-    <li>메뉴에서 <b>[터미널(관리자)]</b> 또는 <b>[Windows PowerShell(관리자)]</b>를 켭니다.</li>
-    <li>창이 뜨면 위에 복사한 명령어를 붙여넣고 <b>엔터(Enter)</b>를 칩니다.</li>
-    <li>크롬이 꺼지면 다시 켜서 1단계를 다시 진행하세요.</li>
-  </ol>
+  <!-- 문제 해결 확인 버튼 -->
+  <button id="problemBtn" onclick="showPowerShellGuide()" style="padding: 10px 20px; font-weight: bold; cursor: pointer;">
+    그래도 문제가 해결되지 않나요?
+  </button>
+
+  <!-- 버튼을 누르면 나타나는 숨겨진 안내 영역 -->
+  <div id="powershellGuide" style="display: none; margin-top: 20px; background-color: #f9f9f9; padding: 15px; border-left: 4px solid #ff4d4d;">
+    <h3>만약 회색으로 잠겨있어서 파란색으로 그게 되지 않는 다면</h3>
+    <p>아래 순서대로 진행하여 잠금을 강제로 해제해 주세요.</p>
+    
+    <ol>
+      <li>윈도우 검색창에 <b>powershell</b>을 칩니다.</li>
+      <li>검색 결과에 나오는 <b>[Windows PowerShell]</b>을 마우스 오른쪽 버튼으로 클릭한 뒤, 반드시 <b>[관리자 권한으로 실행]</b>을 누릅니다.</li>
+      <li>창이 열리면 아래 명령어를 복사해서 붙여넣고 <b>엔터(Enter)</b>를 칩니다.</li>
+    </ol>
+
+    <!-- 복사할 명령어 상자 -->
+    <textarea id="psCommand" rows="2" cols="80" readonly onclick="this.select()">Remove-Item -Path "HKLM:\SOFTWARE\Policies\Google\Chrome", "HKCU:\SOFTWARE\Policies\Google\Chrome" -Recurse -ErrorAction SilentlyContinue; Stop-Process -Name chrome -Force -ErrorAction SilentlyContinue</textarea>
+    <br>
+    <button onclick="copyText('psCommand')">명령어 복사하기</button>
+
+    <p style="margin-top: 15px; font-weight: bold; color: blue;">
+      ※ 그 후 다시 하면 정상적으로 파란색 스위치를 켤 수 있게 변경됩니다!
+    </p>
+  </div>
 
   <script>
+    // 글자 복사 함수
     function copyText(id) {
       var element = document.getElementById(id);
       element.select();
       element.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(element.value);
       alert("복사되었습니다!");
+    }
+
+    // 버튼 누르면 PowerShell 안내문 보이기 함수
+    function showPowerShellGuide() {
+      var guide = document.getElementById("powershellGuide");
+      var btn = document.getElementById("problemBtn");
+      
+      if (guide.style.display === "none") {
+        guide.style.display = "block";
+        btn.innerText = "안내 숨기기";
+      } else {
+        guide.style.display = "none";
+        btn.innerText = "그래도 문제가 해결되지 않나요?";
+      }
     }
   </script>
 
