@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>Fix DNS</title></head>
+<body>
+
+  <h3>1단계: 브라우저 설정 바로가기</h3>
+  <p>아래 버튼을 눌러 설정 창으로 이동한 뒤, <b>[보안 DNS 사용]</b>을 켜고 Cloudflare (1.1.1.1)로 바꾸세요.</p>
+  <button onclick="window.open('chrome://settings/security')">크롬 보안설정 열기</button>
+  <button onclick="window.open('edge://settings/privacy')">엣지 보안설정 열기</button>
+
+  <hr>
+
+  <h3>2단계: 설정이 막혀있을 때 (PowerShell 명령어)</h3>
+  <p>위 버튼을 눌렀는데 회색으로 막혀있다면, 아래 상자의 명령어를 모두 복사하세요.<br>
+  그다음 <b>관리자 권한 PowerShell</b>에 붙여넣고 엔터를 치면 잠금이 풀립니다.</p>
+  
+  <textarea rows="4" cols="80" readonly onclick="this.select()">Remove-Item -Path "HKLM:\SOFTWARE\Policies\Google\Chrome", "HKCU:\SOFTWARE\Policies\Google\Chrome" -Recurse -ErrorAction SilentlyContinue; Stop-Process -Name chrome -Force -ErrorAction SilentlyContinue</textarea>
+  <br><br>
+  <p>※ 상자 안을 클릭하면 전체 선택됩니다. 복사(Ctrl+C)해서 사용하세요. (실행 시 크롬이 자동 강제 종료됩니다.)</p>
+
+</body>
+</html>
